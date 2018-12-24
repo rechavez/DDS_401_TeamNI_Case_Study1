@@ -1,1 +1,2 @@
 # DDS_401_TeamNI_Case_Study1
+# This is a repository for Team Natural Intelligence's Case Study #1 for Southern Methodist University Doing Data Science course, term 401. This repository contains all relevant documentation for a case study examining several types of beers from different breweries, and deriving insights around bitterness and alcohol by volume. This includes R MarkDown scripts, technical specifications, and presentation documents.
