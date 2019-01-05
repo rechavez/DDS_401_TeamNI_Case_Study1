@@ -1,0 +1,49 @@
+---
+title: 'Natural Intelligence Team - MSDS 6306: Case Study 01'
+author: "Ruben Chavez, Michael Wolfe, Ayoade Dare"
+date: "January 5, 2019"
+output: 
+  html_document:
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Brewery by state -- 
+
+```{r Brewery by State}
+library(readr)
+library(knitr)
+Beers <- read_csv("Beers.csv")
+Breweries <- read_csv("Breweries.csv")
+BreweryPerState <- data.frame(table(Breweries$State))
+colnames(BreweryPerState) <- c("State", "Number of Breweries")
+kable(BreweryPerState, format = "html", caption = "Number of Breweries by State", align = "c")
+```
+
+ ---taken data Brewery data and combined it with our Beer data based on the Unique Beer ID to allow for a deeper analysis. 
+
+```{r Combine Beer and Brewery data}
+BeersAndBreweries <- merge(Beers, Breweries, by.x = "Beer_ID", by.y = "Brew_ID")
+colnames(BeersAndBreweries) <- c("Beer_ID", "Beer_Name", "ABV", "IBU", "Brewery_id", "Style", "Ounces", "Brewery_Name", "City", "State")
+```
+
+```{r Print First and Last ten rows of Merged Data Frame}
+kable(head(BeersAndBreweries, 10), caption = "First Ten Beers of Merged DataFrame", align = "c")
+kable(tail(BeersAndBreweries, 10), caption = "Last Ten Beers of Merged DataFrame", align = "c")
+```
+
+```{r count of missing values}
+library(dplyr)
+CountOfNA <- data.frame(colSums(is.na(BeersAndBreweries)))
+colnames(CountOfNA) <- c("Missing Values")
+CountOfNA$ColumnName <- row.names(CountOfNA)
+rownames(CountOfNA) <- c()
+CountOfNA <- CountOfNA %>% select("ColumnName", "Missing Values")
+kable(CountOfNA)
+```
+
