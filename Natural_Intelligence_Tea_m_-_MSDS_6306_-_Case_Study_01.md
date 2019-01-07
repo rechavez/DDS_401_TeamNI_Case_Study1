@@ -25,6 +25,26 @@ Due to your recent decision to leave your current state and move the propective 
 
 
 ####Number of Breweries per State
+
+```r
+#Import required libraries
+suppressMessages(library(RCurl))
+suppressMessages(library(readr))
+suppressMessages(library(knitr))
+suppressMessages(library(ggplot2))
+suppressMessages(library(kableExtra))
+suppressMessages(library(dplyr))
+#read Beer and Brewery data 
+BeersURL <- getURL("https://raw.githubusercontent.com/mjwolfe91/DDS_401_TeamNI_Case_Study1/master/Beers.csv")
+BrewURL <- getURL("https://raw.githubusercontent.com/mjwolfe91/DDS_401_TeamNI_Case_Study1/master/Breweries.csv")
+Beers <- read_csv(BeersURL)
+Breweries <- read_csv(BrewURL)
+#calculate and display number of breweries per state
+BreweryPerState <- data.frame(table(Breweries$State))
+colnames(BreweryPerState) <- c("State", "Number of Breweries")
+kable(BreweryPerState, format = "html", align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -245,6 +265,11 @@ Further analysis of brewery location analysis in terms of brewery per capita is 
  
  
 
+```r
+#Combine Beer and Brewery data
+BeersAndBreweries <- merge(Beers, Breweries, by.x = "Beer_ID", by.y = "Brew_ID")
+colnames(BeersAndBreweries) <- c("Beer_ID", "Beer_Name", "ABV", "IBU", "Brewery_id", "Style", "Ounces", "Brewery_Name", "City", "State")
+```
 
 
 
@@ -255,6 +280,12 @@ Further analysis of brewery location analysis in terms of brewery per capita is 
 The following table provides a sample of the first ten and last ten Beers with their respective breweries. These tables allows you to do a quick spot check of the dataset used by the report. This is necessary in case your source data should change formats going forward. 
 
 
+
+
+```r
+#print head and tail of merged data
+kable(head(BeersAndBreweries, 10), caption = "First Ten Beers of Merged DataFrame", align = "c")  %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
 
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>First Ten Beers of Merged DataFrame</caption>
@@ -395,6 +426,10 @@ The following table provides a sample of the first ten and last ten Beers with t
   </tr>
 </tbody>
 </table>
+
+```r
+kable(tail(BeersAndBreweries, 10), caption = "Last Ten Beers of Merged DataFrame", align = "c")  %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
 
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption>Last Ten Beers of Merged DataFrame</caption>
@@ -557,6 +592,18 @@ We have noticed that the available data does include a number of missing values.
 
 
 
+
+```r
+#Create data frame of count of NA and format for display
+CountOfNA <- data.frame(colSums(is.na(BeersAndBreweries)))
+colnames(CountOfNA) <- c("Missing Values")
+CountOfNA$ColumnName <- row.names(CountOfNA)
+rownames(CountOfNA) <- c()
+CountOfNA <- CountOfNA %>% select("ColumnName", "Missing Values")
+#Display table of NA dataframe
+kable(CountOfNA)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -618,17 +665,44 @@ We understood your concern about differing tastes in beer style regarding Alcoho
 
 *If any state has no reported Beers a relevant message will be produced before the graph.*
 
+```r
+#Create Median IBU and ABV dataframes
+MedianIBU <- as.data.frame.table(tapply(BeersAndBreweries$IBU, BeersAndBreweries$State, median, na.rm=TRUE))
+colnames(MedianIBU) <- c("State", "MedianIBU")
+MedianABV <- as.data.frame.table(tapply(BeersAndBreweries$ABV, BeersAndBreweries$State, median, na.rm=TRUE))
+colnames(MedianABV) <- c("State", "MedianABV")
+
+##Unused code for merged Median Data 
+##MedianDF <- merge(MedianIBU, MedianABV, by="Var1")
+
+#Create plots of Median IBU and ABV
+ggplot(data = MedianIBU, aes(x = State, fill = MedianIBU, y = MedianIBU), xlab("State")) + geom_bar(stat = "identity") + ggtitle("Median IBU by State") + xlab("State") + ylab("Median IBU") + labs(fill = "State") + theme(plot.title = element_text(hjust = 0.5, size = 30, face = "bold")) + scale_color_discrete(drop=FALSE)
+```
+
 ```
 ## Warning: Removed 1 rows containing missing values (position_stack).
 ```
 
-![](Natural_Intelligence_Tea_m_-_MSDS_6306_-_Case_Study_01_files/figure-html/median ABV and IBU by State-1.png)<!-- -->![](Natural_Intelligence_Tea_m_-_MSDS_6306_-_Case_Study_01_files/figure-html/median ABV and IBU by State-2.png)<!-- -->
+![](Natural_Intelligence_Tea_m_-_MSDS_6306_-_Case_Study_01_files/figure-html/median ABV and IBU by State-1.png)<!-- -->
+
+```r
+ggplot(data = MedianABV, aes(x = State, y = MedianABV, fill = MedianABV), xlab("State")) + geom_bar(stat = "identity") + ggtitle("Median ABV by State") + xlab("State") + ylab("Median ABV") + labs(fill = "State") + theme(plot.title = element_text(hjust = 0.5, size = 30, face = "bold")) + scale_color_discrete(drop=FALSE)
+```
+
+![](Natural_Intelligence_Tea_m_-_MSDS_6306_-_Case_Study_01_files/figure-html/median ABV and IBU by State-2.png)<!-- -->
 
 
 A snapshot of the current beer with the highest ABV and IBU will allow you to ensure that your "Jupiter IPA" beer can still be marketed as the "highest alcohol IPA with the a punch of Hops to the face".
 
 
 ####Beer with Highest ABV
+
+```r
+#Identify and display the Beer with the highest ABV
+maxABV <- BeersAndBreweries[which.max(BeersAndBreweries$ABV),]
+kable(maxABV)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -663,6 +737,13 @@ A snapshot of the current beer with the highest ABV and IBU will allow you to en
 </table>
 
 ####Beer with Highest IBV
+
+```r
+#Identify and display the Beer with the highestIBU
+maxIBU <- BeersAndBreweries[which.max(BeersAndBreweries$IBU),]
+kable(maxIBU)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -701,6 +782,17 @@ Jupiter IPA should also be compared to the current national ABV in general.
 
 
 ####National ABV Statistics
+
+```r
+#Create Dataframe version of sumamry statistics and format
+ABVSummary <- data.frame(levels(factor(summary(BeersAndBreweries$ABV))))
+ABVSummary <- as.data.frame(t(ABVSummary))
+row.names(ABVSummary) <- c()
+colnames(ABVSummary) <- c(labels(factor(summary(BeersAndBreweries$ABV))))
+#display sumamry statistics of ABV column
+kable(ABVSummary)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -734,6 +826,10 @@ Jupiter IPA should also be compared to the current national ABV in general.
 
 We understand your concern that further increase to the ABV of Jupiter IPA will negatively affect the beer's IBU. The data currently shows no need for such a concern. In fact the IBU seems to increase with ABV. Although the relationship is not very strong. Whether the ABV is causing the increase in the IBU or tastes in high ABV coincide with tasts in high IBU warrants further research by R&D.
 
+
+```r
+ggplot(data = BeersAndBreweries, aes(ABV, IBU)) + geom_point(stat = "identity", color='blue') + geom_smooth(color='red',data = BeersAndBreweries, aes(x=ABV, y=IBU)) + ggtitle("ABV and IBU Regression Analysis") + labs(fill = "ABV and IBU Regression Analysis") + theme(plot.title = element_text(hjust = 0.5, size = 30, face = "bold")) + scale_color_discrete(drop=FALSE)
+```
 
 ```
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
