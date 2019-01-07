@@ -147,4 +147,4 @@ ggplot(data = BeersAndBreweries, aes(ABV, IBU)) + geom_point(stat = "identity", 
 
 ##Future Follow-Up
 
-From the prior analysis, it is not clear whether the ABV is causing the increase in the IBU or tastes in high ABV coincide with tasts in high IBU. We recommend further research into the relationship between ABV and IBU to ensure continued success in ExploringNewBusiness Brewery's endeavors in this market.
+From the above analysis, there's no clear causal relationship between ABV and IBU, despite the loose correlation among the two. We recommend further research into the link between ABV and IBU to ensure continued success in ExploringNewBusiness Brewery's endeavors in this market.
