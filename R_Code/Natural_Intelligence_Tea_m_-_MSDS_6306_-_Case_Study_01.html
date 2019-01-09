@@ -1467,9 +1467,6 @@ colnames(MedianIBU) &lt;- c(&quot;State&quot;, &quot;MedianIBU&quot;)
 MedianABV &lt;- as.data.frame.table(tapply(BeersAndBreweries$ABV, BeersAndBreweries$State, median, na.rm=TRUE))
 colnames(MedianABV) &lt;- c(&quot;State&quot;, &quot;MedianABV&quot;)
 
-##Unused code for merged Median Data 
-##MedianDF &lt;- merge(MedianIBU, MedianABV, by=&quot;Var1&quot;)
-
 #Create plots of Median IBU and ABV
 ggplot(data = MedianIBU, aes(x = State, fill = MedianIBU, y = MedianIBU), xlab(&quot;State&quot;)) + geom_bar(stat = &quot;identity&quot;) + ggtitle(&quot;Median IBU by State&quot;) + xlab(&quot;State&quot;) + ylab(&quot;Median IBU&quot;) + labs(fill = &quot;State&quot;) + theme(plot.title = element_text(hjust = 0.5, size = 30, face = &quot;bold&quot;)) + scale_color_discrete(drop=FALSE)</code></pre>
 <pre><code>## Warning: Removed 1 rows containing missing values (position_stack).</code></pre>

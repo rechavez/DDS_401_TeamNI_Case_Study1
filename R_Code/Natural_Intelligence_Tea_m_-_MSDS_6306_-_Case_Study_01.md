@@ -664,9 +664,6 @@ colnames(MedianIBU) <- c("State", "MedianIBU")
 MedianABV <- as.data.frame.table(tapply(BeersAndBreweries$ABV, BeersAndBreweries$State, median, na.rm=TRUE))
 colnames(MedianABV) <- c("State", "MedianABV")
 
-##Unused code for merged Median Data 
-##MedianDF <- merge(MedianIBU, MedianABV, by="Var1")
-
 #Create plots of Median IBU and ABV
 ggplot(data = MedianIBU, aes(x = State, fill = MedianIBU, y = MedianIBU), xlab("State")) + geom_bar(stat = "identity") + ggtitle("Median IBU by State") + xlab("State") + ylab("Median IBU") + labs(fill = "State") + theme(plot.title = element_text(hjust = 0.5, size = 30, face = "bold")) + scale_color_discrete(drop=FALSE)
 ```
