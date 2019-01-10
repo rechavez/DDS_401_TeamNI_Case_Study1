@@ -10,18 +10,14 @@ output:
 
 
 <center> <h1>Brewery Market Analysis for ExploringNewBusiness Brewery</h1> </center>
-<center> <h1>Addendum</h1> </center>
+<center> <h1>Initial Report Addendum</h1> </center>
 
-Natural Intelligence Analysis Inc would like to thank ExploringNewBusiness Breweries for allowing us to provide your market analysis of current breweries in the United States. Per our meeting following the original report we have prepared the following addendum to answer your questions. The following report can be run at any time if the provided Beer and Brewery datasets are updated.
-
-
+Natural Intelligence Analysis Inc would like to thank ExploringNewBusiness Breweries for allowing us to provide your market analysis of current breweries in the United States. Per our meeting following the original report we have prepared the following addendum to answer your questions. The following report can be run at any time if the provided Beers and Brewery datasets are updated.
 
 
 ### Brewery by state
 
 Due to your recent decision to leave your current state and move the propective location of your business we have expanded our analysis to the entire United States. A list of the number of breweries in each state provided an intial idea of the market saturation of breweries labeled as "local" in each state.
-
-
 
 
 ####Number of Breweries per State
@@ -33,10 +29,17 @@ suppressMessages(library(readr))
 suppressMessages(library(knitr))
 suppressMessages(library(ggplot2))
 suppressMessages(library(kableExtra))
+```
+
+```
+## Warning: package 'kableExtra' was built under R version 3.5.2
+```
+
+```r
 suppressMessages(library(dplyr))
 #read Beer and Brewery data 
-BeersURL <- getURL("https://raw.githubusercontent.com/mjwolfe91/DDS_401_TeamNI_Case_Study1/master/Beers.csv")
-BrewURL <- getURL("https://raw.githubusercontent.com/mjwolfe91/DDS_401_TeamNI_Case_Study1/master/Breweries.csv")
+BeersURL <- getURL("https://raw.githubusercontent.com/mjwolfe91/DDS_401_TeamNI_Case_Study1/master/Data/Beers.csv")
+BrewURL <- getURL("https://raw.githubusercontent.com/mjwolfe91/DDS_401_TeamNI_Case_Study1/master/Data/Breweries.csv")
 Beers <- read_csv(BeersURL)
 Breweries <- read_csv(BrewURL)
 #calculate and display number of breweries per state
@@ -261,7 +264,7 @@ kable(BreweryPerState, format = "html", align = "c") %>% kable_styling(bootstrap
 </table>
 
 
-Further analysis of brewery location analysis in terms of brewery per capita is available upon request.
+A few datapoints to highlight would be the high concentration of breweries on the west coast (namely California), and very small numbers in the Dakotas. Further analysis of brewery location analysis in terms of brewery per capita is available upon request.
  
  
 
@@ -272,13 +275,9 @@ colnames(BeersAndBreweries) <- c("Beer_ID", "Beer_Name", "ABV", "IBU", "Brewery_
 ```
 
 
-
-
-
 ###Combination of Datasets
 
-The following table provides a sample of the first ten and last ten Beers with their respective breweries. These tables allows you to do a quick spot check of the dataset used by the report. This is necessary in case your source data should change formats going forward. 
-
+The following table provides a sample of the first ten and last ten beers with their respective breweries. These tables allows you to do a quick spot check of the dataset used by the report. This is necessary in case your source data should change formats going forward. 
 
 
 
@@ -583,13 +582,9 @@ kable(tail(BeersAndBreweries, 10), caption = "Last Ten Beers of Merged DataFrame
 </table>
 
 
-
-
-
 ###Missing Values
 
 We have noticed that the available data does include a number of missing values. We have provided a table to allow for line of site of the count of missing data per column. We highly recommend your marketing team continue to add to your beer and brewery initial market research data sets until the table shows all 0's to allow for the provided report to be increasingly accurate.
-
 
 
 
@@ -655,13 +650,12 @@ kable(CountOfNA)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
 </tbody>
 </table>
 
-
-
+There are a high number of missing values in the IBU column. This should be taken into consideration in the proceeding analysis.
 
 
 ###Beer Characteristics by State -- ABV and IBU
 
-We understood your concern about differing tastes in beer style regarding Alcohol by Volume(ABV) and Bitterness(IBV).A median value for ABV and IBV by state provides a quick reference point until a more in depth analysis can be completed. 
+We understood your concern about differing tastes in beer style regarding Alcohol by Volume (ABV) and International Bitterness Unit (IBU).A median value for ABV and IBU by state provides a quick reference point until a more in depth analysis can be completed. 
 
 *If any state has no reported Beers a relevant message will be produced before the graph.*
 
@@ -671,9 +665,6 @@ MedianIBU <- as.data.frame.table(tapply(BeersAndBreweries$IBU, BeersAndBreweries
 colnames(MedianIBU) <- c("State", "MedianIBU")
 MedianABV <- as.data.frame.table(tapply(BeersAndBreweries$ABV, BeersAndBreweries$State, median, na.rm=TRUE))
 colnames(MedianABV) <- c("State", "MedianABV")
-
-##Unused code for merged Median Data 
-##MedianDF <- merge(MedianIBU, MedianABV, by="Var1")
 
 #Create plots of Median IBU and ABV
 ggplot(data = MedianIBU, aes(x = State, fill = MedianIBU, y = MedianIBU), xlab("State")) + geom_bar(stat = "identity") + ggtitle("Median IBU by State") + xlab("State") + ylab("Median IBU") + labs(fill = "State") + theme(plot.title = element_text(hjust = 0.5, size = 30, face = "bold")) + scale_color_discrete(drop=FALSE)
@@ -692,7 +683,7 @@ ggplot(data = MedianABV, aes(x = State, y = MedianABV, fill = MedianABV), xlab("
 ![](Natural_Intelligence_Tea_m_-_MSDS_6306_-_Case_Study_01_files/figure-html/median ABV and IBU by State-2.png)<!-- -->
 
 
-A snapshot of the current beer with the highest ABV and IBU will allow you to ensure that your "Jupiter IPA" beer can still be marketed as the "highest alcohol IPA with the a punch of Hops to the face".
+Lighter shades of blue denote higher concentrations of ABV and IBU, while darker shades will have lower concentrations. IBU data is not available for North Dakota - note the bar is missing. A snapshot of the current beer with the highest ABV and IBU will allow you to ensure that your "Jupiter IPA" beer can still be marketed as the "highest alcohol by volume IPA with a punch of hops to the face".
 
 
 ####Beer with Highest ABV
@@ -735,8 +726,10 @@ kable(maxABV)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
   </tr>
 </tbody>
 </table>
+The highest ABV is the GUBNA Imperial IPA, produced by COAST Brewing Company in Charleston, South Carolina.
 
-####Beer with Highest IBV
+
+####Beer with Highest IBU
 
 ```r
 #Identify and display the Beer with the highestIBU
@@ -776,9 +769,7 @@ kable(maxIBU)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
   </tr>
 </tbody>
 </table>
-
-
-Jupiter IPA should also be compared to the current national ABV in general.
+The highest IBU is measured in the Abrasive Ale IPA, produced by Witch's Hat Brewing Company in South Lyon, Michiganc. We recommend Jupiter IPA be compared to the current national ABV and IBU metrics - see below.
 
 
 ####National ABV Statistics
@@ -817,14 +808,12 @@ kable(ABVSummary)  %>% kable_styling(bootstrap_options = c("striped", "hover"))
   </tr>
 </tbody>
 </table>
-
-
-
+The mean ABV is 0.058, slightly higher than the median of 0.055. These metrics support Jupiter IPA's current marketing strategy.
 
 
 ###Relationship of ABV to IBU
 
-We understand your concern that further increase to the ABV of Jupiter IPA will negatively affect the beer's IBU. The data currently shows no need for such a concern. In fact the IBU seems to increase with ABV. Although the relationship is not very strong. Whether the ABV is causing the increase in the IBU or tastes in high ABV coincide with tasts in high IBU warrants further research by R&D.
+We understand your concern that further increase to the ABV of Jupiter IPA will negatively affect the beer's IBU. The data currently shows no need for such a concern. In fact the IBU seems to increase with ABV, albeit with a relatively loose correlation.
 
 
 ```r
@@ -844,3 +833,16 @@ ggplot(data = BeersAndBreweries, aes(ABV, IBU)) + geom_point(stat = "identity", 
 ```
 
 ![](Natural_Intelligence_Tea_m_-_MSDS_6306_-_Case_Study_01_files/figure-html/scatterplot relationship between ABV and IBU-1.png)<!-- -->
+From the above analysis, there's no clear causal relationship between ABV and IBU, despite the loose correlation among the two. We recommend further research into the link between ABV and IBU to ensure continued success in ExploringNewBusiness Brewery's endeavors in this market.
+
+##Summary
+
+In summary, ExploringNewBusiness Brewery is well-positioned in the market with its flagship product - Jupiter IPA. Market analysis demonstrates fewer breweries in the midwest, Jupiter IPA's marketing measures well against current market leaders as well as the national average, and potential future research into the relationship IBU and ABV relationships. We recommend the following analysis for our next endeavor:
+
+-Cleaner IBU data to address gaps
+
+-Additional research into the relationship between ABV and IBU
+
+-Market analysis for Jupiter IPA
+
+We look forward to working with ExploringNewBusiness Brewery in the future!
